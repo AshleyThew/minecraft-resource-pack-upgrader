@@ -17,14 +17,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Create branch from tag
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          BRANCH_NAME=${GITHUB_REF#refs/tags/}
-          git checkout -b $BRANCH_NAME
-          git push origin $BRANCH_NAME
-
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
