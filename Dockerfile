@@ -3,4 +3,5 @@ ADD /app /app
 WORKDIR /app
 
 ENV PYTHONPATH /app
-CMD ["/app/upgrade.py"]
+ENTRYPOINT ["python", "/app/upgrade.py"]
+CMD []
