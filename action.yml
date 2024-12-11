@@ -11,7 +11,10 @@ branding:
   icon: 'package'
   color: 'green'
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  args:
-    - ${{ inputs.input_path }}
+  using: 'composite'
+  steps:
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    - run: python app/upgrade.py ${{ inputs.input_path }}
+      shell: bash
