@@ -1,5 +1,6 @@
 # Ignore pytest cache
 .pytest_cache/
+__pycache__/
 
 # Ignore virtual environment
 .venv/
