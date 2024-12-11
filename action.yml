@@ -1,0 +1,17 @@
+name: 'Minecraft Resource Pack Upgrader'
+description: 'Upgrades Minecraft resource packs to 1.21.4'
+inputs:
+  input_path:
+    description: 'Path to the resource pack to upgrade'
+    required: true
+outputs:
+  success:
+    description: 'Whether upgrade succeeded'
+branding:
+  icon: 'package'
+  color: 'green'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.input_path }}

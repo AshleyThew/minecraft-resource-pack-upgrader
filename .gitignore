@@ -1,0 +1,5 @@
+# Ignore pytest cache
+.pytest_cache/
+
+# Ignore virtual environment
+.venv/
