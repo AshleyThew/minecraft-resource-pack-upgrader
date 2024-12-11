@@ -91,7 +91,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           filename: 'upgraded_resourcepack.zip'
-          exclusions: '*.git* README.md *.schema* *.zip *.py run/*'
+          exclusions: '*.git* README.md *.zip'
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
