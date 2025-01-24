@@ -21,7 +21,7 @@ def convert_json_format(input_json: Dict) -> Dict:
     # Normalize base texture path
     if base_texture == "item/crossbow_standby":
         base_texture = "item/crossbow"
-    if not base_texture.startswith("minecraft:"):
+    if not base_texture.startswith("minecraft:") and ":" not in base_texture:
         base_texture = f"minecraft:item/{base_texture.replace('item/', '')}"
 
     # Create base format
