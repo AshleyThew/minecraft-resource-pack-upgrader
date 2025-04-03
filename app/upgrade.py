@@ -25,11 +25,22 @@ def convert_json_format(input_json: Dict) -> Dict:
         base_texture = f"minecraft:item/{base_texture.replace('item/', '')}"
 
     # Create base format
+    fallback_model = {"type": "model", "model": base_texture}
+    
+    # Add dye tint for leather armor items
+    leather_items = ["minecraft:item/leather_boots", "minecraft:item/leather_leggings", 
+                    "minecraft:item/leather_chestplate", "minecraft:item/leather_helmet"]
+    
+    is_leather_item = base_texture in leather_items
+
+    if is_leather_item:
+        fallback_model["tints"] = [{"type": "minecraft:dye", "default": -6265536}]
+    
     new_format = {
         "model": {
             "type": "range_dispatch",
             "property": "custom_model_data",
-            "fallback": {"type": "model", "model": base_texture},
+            "fallback": fallback_model,
             "entries": []
         }
     }
@@ -138,9 +149,15 @@ def convert_json_format(input_json: Dict) -> Dict:
             else:
                 continue
 
+            entry_model = {"type": "model", "model": override["model"]}
+            
+            # Add tints to leather armor models in overrides
+            if is_leather_item:
+                entry_model["tints"] = [{"type": "minecraft:dye", "default": -6265536}]
+                
             new_format["model"]["entries"].append({
                 "threshold": cmd,
-                "model": {"type": "model", "model": override["model"]}
+                "model": entry_model
             })
 
     return new_format
