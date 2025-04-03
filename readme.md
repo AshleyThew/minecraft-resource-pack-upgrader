@@ -40,7 +40,7 @@ Add to your GitHub Actions workflow:
 
 ```yaml
 - name: Upgrade resource pack
-  uses: AshleyThew/minecraft-resource-pack-upgrader@v1.1.2
+  uses: AshleyThew/minecraft-resource-pack-upgrader@v1.1.3
   with:
     input_path: 'path/to/source/resourcepack'
 ```
