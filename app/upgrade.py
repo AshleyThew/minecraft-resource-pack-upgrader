@@ -10,6 +10,7 @@ https://github.com/BrilliantTeam/Minecraft-ResourcePack-Migrator/blob/main/conve
 import json
 import os
 import sys
+import glob
 from typing import Dict
 
 def convert_json_format(input_json: Dict) -> Dict:
@@ -198,7 +199,8 @@ def process_directory(input_dir: str) -> bool:
             except Exception as e:
                 print(f"Error processing {json_file}: {e}")
                 continue
-
+        # Process oversized_in_gui property
+        add_oversized_in_gui(input_dir)
         return True
 
     except Exception as e:
@@ -220,6 +222,35 @@ def main():
         return False
 
     return process_directory(input_dir)
+
+def add_oversized_in_gui(input_dir):
+    """Process all .json files in input_dir and add oversized_in_gui property where needed."""
+    json_files = glob.glob(os.path.join(input_dir, "**/*.json"), recursive=True)
+    
+    modified_count = 0
+    
+    for file_path in json_files:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Check if the JSON has display.gui property
+            if isinstance(data, dict) and 'display' in data and isinstance(data['display'], dict) and 'gui' in data['display']:
+                # Add oversized_in_gui property if it doesn't already exist
+                if 'oversized_in_gui' not in data:
+                    data['oversized_in_gui'] = True
+                    
+                    # Write back to file with proper formatting
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        json.dump(data, f, indent='\t', ensure_ascii=False)
+                    
+                    modified_count += 1
+                    print(f"Modified: {file_path}")
+        
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"Error processing {file_path}: {e}")
+    
+    print(f"\nProcessed {len(json_files)} files, modified {modified_count} files.")
 
 if __name__ == '__main__':
     success = main()
