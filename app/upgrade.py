@@ -224,8 +224,14 @@ def main():
     return process_directory(input_dir)
 
 def add_oversized_in_gui(input_dir):
-    """Process all .json files in input_dir and add oversized_in_gui property where needed."""
-    json_files = glob.glob(os.path.join(input_dir, "**/*.json"), recursive=True)
+    """Process all .json files in assets\minecraft\items and add oversized_in_gui property where needed."""
+    items_dir = os.path.join(input_dir, "assets", "minecraft", "items")
+    
+    if not os.path.exists(items_dir):
+        print(f"Items directory not found: {items_dir}")
+        return
+    
+    json_files = glob.glob(os.path.join(items_dir, "*.json"))
     
     modified_count = 0
     
@@ -234,8 +240,6 @@ def add_oversized_in_gui(input_dir):
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
-            # Check if the JSON has display.gui property
-            if isinstance(data, dict) and 'display' in data and isinstance(data['display'], dict) and 'gui' in data['display']:
                 # Add oversized_in_gui property if it doesn't already exist
                 if 'oversized_in_gui' not in data:
                     data['oversized_in_gui'] = True
@@ -246,11 +250,11 @@ def add_oversized_in_gui(input_dir):
                     
                     modified_count += 1
                     print(f"Modified: {file_path}")
-        
+    
         except (json.JSONDecodeError, IOError) as e:
             print(f"Error processing {file_path}: {e}")
     
-    print(f"\nProcessed {len(json_files)} files, modified {modified_count} files.")
+    print(f"\nProcessed {len(json_files)} files in items directory, modified {modified_count} files.")
 
 if __name__ == '__main__':
     success = main()
