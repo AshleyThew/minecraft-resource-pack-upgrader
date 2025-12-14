@@ -462,6 +462,12 @@ def process_block_model(model_path: str, textures_dir: str, blocks_texture_dir: 
                 # Copy texture if it doesn't already exist
                 if not os.path.exists(target_texture_path):
                     shutil.copy2(source_texture_path, target_texture_path)
+                    
+                    # Copy mcmeta if exists
+                    source_mcmeta = source_texture_path + ".mcmeta"
+                    if os.path.exists(source_mcmeta):
+                        shutil.copy2(source_mcmeta, target_texture_path + ".mcmeta")
+                        
                     textures_copied += 1
                     print(f"  Copied texture: {texture_path} -> block/{rel_texture_path}")
                 
@@ -722,7 +728,7 @@ def get_minecraft_jar_path() -> str:
     # Download if not found
     return download_client_jar(MINECRAFT_VERSION, cache_dir)
 
-def extract_texture_from_jar(jar_path: str, texture_path: str, output_path: str) -> bool:
+def extract_texture_from_jar(jar_path: str, texture_path: str, output_path: str, is_mcmeta: bool = False) -> bool:
     """Extract a texture file from the Minecraft JAR."""
     try:
         # Texture path in jar is typically assets/minecraft/textures/...
@@ -735,7 +741,8 @@ def extract_texture_from_jar(jar_path: str, texture_path: str, output_path: str)
         else:
             path = texture_path
             
-        jar_entry = f"assets/minecraft/textures/{path}.png"
+        extension = ".png.mcmeta" if is_mcmeta else ".png"
+        jar_entry = f"assets/minecraft/textures/{path}{extension}"
         
         with zipfile.ZipFile(jar_path, 'r') as jar:
             try:
@@ -753,7 +760,8 @@ def extract_texture_from_jar(jar_path: str, texture_path: str, output_path: str)
                 return False
                 
     except Exception as e:
-        print(f"Error extracting from JAR: {e}")
+        if not is_mcmeta:
+            print(f"Error extracting from JAR: {e}")
         return False
 
 def process_model_textures(model_data: Dict, textures_dir: str, items_texture_dir: str, block_to_item_mappings: Dict[str, str]) -> tuple[bool, int]:
@@ -819,6 +827,12 @@ def process_model_textures(model_data: Dict, textures_dir: str, items_texture_di
                 # Copy texture if it doesn't already exist
                 if not os.path.exists(target_texture_path):
                     shutil.copy2(source_texture_path, target_texture_path)
+                    
+                    # Copy mcmeta if exists
+                    source_mcmeta = source_texture_path + ".mcmeta"
+                    if os.path.exists(source_mcmeta):
+                        shutil.copy2(source_mcmeta, target_texture_path + ".mcmeta")
+                        
                     textures_copied += 1
                     print(f"    Copied texture: {texture_path} -> item/{rel_path}")
             else:
@@ -830,6 +844,9 @@ def process_model_textures(model_data: Dict, textures_dir: str, items_texture_di
                     
                     if not os.path.exists(target_texture_path):
                         if extract_texture_from_jar(jar_path, texture_path, target_texture_path):
+                            # Try to extract mcmeta as well
+                            extract_texture_from_jar(jar_path, texture_path, target_texture_path + ".mcmeta", is_mcmeta=True)
+                            
                             textures_copied += 1
                             print(f"    Extracted texture from JAR: {texture_path} -> item/{rel_path}")
             
